@@ -2,38 +2,56 @@ let foodItem = document.getElementById('foodItem')
 let foodSubmitBtn = document.getElementById('foodSubmitBtn')
 let recipeList = document.getElementById('recipeList')
 
-const BASE_URL = "https://www.food2fork.com/api/search?" + API_KEY
+const BASE_URL = "https://food2fork.com/api/search?key=" + API_KEY
 
-// var isLive = false
-//
-//
-// if(isLive === true) {
-//  //put api call logic
-//
-//  //this function gets called when data comes back from api
-//  //startWithFoodData(DATA_FROM_API)
-// } else {
-//
-//   startWithFoodData(FOOD_DATA)
-//
-// }
+
+
+function fetchTheInfo(method, url){
+  fetch(url, {
+    method: method,
+  }).then(res=>res.json())
+  .then(response => displayAllReceipes(response))
+  .catch(error => console.error('Error: ', error));
+}
+
+
+
+
+
+function createCORSRequest(method, url) {
+  var xhr = new XMLHttpRequest();
+
+
+  if ("withCredentials" in xhr) {
+    xhr.open(method, url, true);
+
+  } else if (typeof XDomainRequest != "undefined") {
+
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+
+  } else {
+
+    xhr = null;
+
+  }
+}
 
 foodSubmitBtn.addEventListener('click', function() {
-
+  console.log("in the button")
   let food = foodItem.value
   let queryURL = BASE_URL + "&q=" + food
-
-  $.get(queryURL, function(res) {
-    console.log(res);
-  })
+  fetchTheInfo("GET", queryURL)
 })
 
 function displayAllReceipes(rec) {
-  console.log('displayAllReceipes');
-  let recipeItems = rec.map(function(recipe) {
+  console.log(rec);
+  let recipeItems = rec.recipes.map(function(recipe) {
     return `
     <li>
+      <img src="${recipe.image_url}" />
       <label> ${recipe.title} </label>
+      <a herf=""${recipe.source_url}"></a>
     </li>
     `
   })
@@ -45,7 +63,3 @@ function displayAllReceipes(rec) {
 function startWithFoodData(foodData){
   console.log('Not Live ATM')
 }
-
-$("#foodSubmitBtn").click(function() {
-  console.log("hello World");
-})
